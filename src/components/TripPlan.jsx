@@ -29,64 +29,104 @@ export default function TripPlan({ tripData }) {
   const bounds = points.length ? points.map((p) => p.ll) : undefined;
 
   return (
-    <div className="max-w-7xl mx-auto">
-      {/* Hero */}
-      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-indigo-600 via-sky-600 to-emerald-600 p-[1px] shadow-2xl">
-        <div className="rounded-3xl bg-white/70 backdrop-blur-xl">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-0">
-            <div className="col-span-2 p-8">
-              <h1 className="text-4xl md:text-5xl font-extrabold text-gray-900">
-                Trip to {destination}
-              </h1>
-              <p className="mt-2 text-gray-600">
-                Plan, navigate, and save—everything in one premium view.
-              </p>
-
-              <div className="mt-6 flex flex-wrap gap-3">
-                <span className="px-4 py-2 rounded-full bg-white shadow text-gray-800">📅 {totalDays} days</span>
-                <span className="px-4 py-2 rounded-full bg-white shadow text-gray-800">👥 {travelers} travelers</span>
-                <span className="px-4 py-2 rounded-full bg-white shadow text-gray-800">💰 ₹{totalBudget}</span>
-                {!!interests?.length && (
-                  <span className="px-4 py-2 rounded-full bg-white shadow text-gray-700">
-                    🎯 {interests.join(", ")}
-                  </span>
-                )}
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      {/* Hero Section */}
+      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-600 p-1 shadow-2xl mb-8">
+        <div className="rounded-3xl bg-white/90 backdrop-blur-xl">
+          <div className="flex flex-col lg:flex-row">
+            {/* Main Content */}
+            <div className="flex-1 p-6 lg:p-8">
+              <div className="flex items-start justify-between">
+                <div>
+                  <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold bg-gradient-to-r from-indigo-600 to-pink-600 bg-clip-text text-transparent">
+                    Trip to {destination}
+                  </h1>
+                  <p className="mt-3 text-gray-600 text-sm sm:text-base">
+                    Your premium AI-powered travel experience
+                  </p>
+                </div>
+                <div className="hidden sm:flex items-center gap-2">
+                  <span className="px-3 py-1 bg-green-500 text-white text-xs rounded-full">AI Generated</span>
+                </div>
               </div>
 
-              <div className="mt-6 flex flex-wrap gap-3">
-                <button onClick={() => window.print()} className="px-4 py-2 rounded-lg bg-gray-900 text-white hover:bg-gray-800 shadow">
-                  Print
-                </button>
-                <button
-                  onClick={() => {
-                    const blob = new Blob([JSON.stringify(tripData, null, 2)], { type: "application/json" });
-                    const url = URL.createObjectURL(blob);
-                    const a = document.createElement("a");
-                    a.href = url;
-                    a.download = `trip-${destination}.json`;
-                    a.click();
-                    URL.revokeObjectURL(url);
-                  }}
-                  className="px-4 py-2 rounded-lg bg-white text-gray-900 border hover:bg-gray-50 shadow"
-                >
-                  Export JSON
-                </button>
+              {/* Stats Grid */}
+              <div className="mt-6 grid grid-cols-2 sm:grid-cols-4 gap-3">
+                <div className="bg-white rounded-2xl p-4 shadow-lg border border-gray-100">
+                  <div className="text-2xl font-bold text-gray-900">{totalDays}</div>
+                  <div className="text-xs text-gray-500 mt-1">Days</div>
+                </div>
+                <div className="bg-white rounded-2xl p-4 shadow-lg border border-gray-100">
+                  <div className="text-2xl font-bold text-gray-900">{travelers}</div>
+                  <div className="text-xs text-gray-500 mt-1">Travelers</div>
+                </div>
+                <div className="bg-white rounded-2xl p-4 shadow-lg border border-gray-100">
+                  <div className="text-2xl font-bold text-gray-900">₹{(totalBudget/1000).toFixed(0)}K</div>
+                  <div className="text-xs text-gray-500 mt-1">Budget</div>
+                </div>
+                <div className="bg-white rounded-2xl p-4 shadow-lg border border-gray-100">
+                  <div className="text-2xl font-bold text-gray-900">{interests?.length || 0}</div>
+                  <div className="text-xs text-gray-500 mt-1">Interests</div>
+                </div>
+              </div>
+
+              {/* Interests & Actions */}
+              <div className="mt-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                {!!interests?.length && (
+                  <div className="flex flex-wrap gap-2">
+                    {interests.slice(0, 3).map((interest, index) => (
+                      <span key={index} className="px-3 py-1.5 bg-gradient-to-r from-blue-500 to-purple-500 text-white text-xs rounded-full shadow-lg">
+                        {interest}
+                      </span>
+                    ))}
+                    {interests.length > 3 && (
+                      <span className="px-3 py-1.5 bg-gray-100 text-gray-600 text-xs rounded-full">
+                        +{interests.length - 3} more
+                      </span>
+                    )}
+                  </div>
+                )}
+                
+                <div className="flex gap-3">
+                  <button 
+                    onClick={() => window.print()} 
+                    className="px-4 py-2.5 bg-gray-900 text-white rounded-xl hover:bg-gray-800 shadow-lg transition-all text-sm font-medium"
+                  >
+                    📄 Print
+                  </button>
+                  <button
+                    onClick={() => {
+                      const blob = new Blob([JSON.stringify(tripData, null, 2)], { type: "application/json" });
+                      const url = URL.createObjectURL(blob);
+                      const a = document.createElement("a");
+                      a.href = url;
+                      a.download = `trip-${destination}.json`;
+                      a.click();
+                      URL.revokeObjectURL(url);
+                    }}
+                    className="px-4 py-2.5 bg-white text-gray-900 border border-gray-200 rounded-xl hover:bg-gray-50 shadow-lg transition-all text-sm font-medium"
+                  >
+                    💾 Export
+                  </button>
+                </div>
               </div>
             </div>
 
-            {/* Sticky Summary + Map */}
-            <div className="col-span-1 bg-white/60 border-l rounded-3xl lg:rounded-l-none lg:rounded-r-3xl p-6">
-              <div className="sticky top-6 space-y-4">
-                <div className="rounded-2xl border bg-white p-4 shadow-sm">
-                  <div className="text-sm text-gray-500">Quick Actions</div>
-                  <div className="mt-3 grid grid-cols-2 gap-2">
+            {/* Sidebar - Map & Actions */}
+            <div className="lg:w-96 border-t lg:border-t-0 lg:border-l border-gray-200">
+              <div className="p-6 space-y-6">
+                {/* Quick Actions */}
+                <div className="bg-gradient-to-br from-blue-500 to-purple-500 rounded-2xl p-5 text-white shadow-2xl">
+                  <h3 className="font-semibold mb-3">Quick Actions</h3>
+                  <div className="grid grid-cols-1 gap-2">
                     <a
                       href={mapsUrl({ destination, mode: "driving" })}
                       target="_blank"
                       rel="noreferrer"
-                      className="px-3 py-2 rounded-lg bg-blue-600 text-white text-center hover:bg-blue-700"
+                      className="flex items-center justify-center gap-2 px-4 py-3 bg-white/20 rounded-xl hover:bg-white/30 transition-all backdrop-blur-sm"
                     >
-                      Open in Maps
+                      <span>🗺️</span>
+                      <span className="font-medium">Open in Maps</span>
                     </a>
                     <a
                       href={calendarUrl({
@@ -96,25 +136,29 @@ export default function TripPlan({ tripData }) {
                       })}
                       target="_blank"
                       rel="noreferrer"
-                      className="px-3 py-2 rounded-lg bg-emerald-600 text-white text-center hover:bg-emerald-700"
+                      className="flex items-center justify-center gap-2 px-4 py-3 bg-white/20 rounded-xl hover:bg-white/30 transition-all backdrop-blur-sm"
                     >
-                      Add to Calendar
+                      <span>📅</span>
+                      <span className="font-medium">Add to Calendar</span>
                     </a>
                   </div>
                 </div>
 
-                <div className="rounded-2xl border bg-white p-3 shadow-sm overflow-hidden">
-                  <MapContainer
-                    bounds={bounds}
-                    center={bounds ? undefined : [15.3, 74.08]}
-                    zoom={bounds ? undefined : 10}
-                    style={{ height: "280px", width: "100%" }}
-                  >
-                    <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-                    {points.map((p, idx) => (
-                      <Marker key={idx} position={p.ll}><Popup>{p.label}</Popup></Marker>
-                    ))}
-                  </MapContainer>
+                {/* Map */}
+                <div className="bg-white rounded-2xl p-4 shadow-xl border border-gray-100">
+                  <div className="h-48 sm:h-64">
+                    <MapContainer
+                      bounds={bounds}
+                      center={bounds ? undefined : [15.3, 74.08]}
+                      zoom={bounds ? undefined : 10}
+                      style={{ height: "100%", width: "100%", borderRadius: "12px" }}
+                    >
+                      <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+                      {points.map((p, idx) => (
+                        <Marker key={idx} position={p.ll}><Popup>{p.label}</Popup></Marker>
+                      ))}
+                    </MapContainer>
+                  </div>
                 </div>
               </div>
             </div>
@@ -122,16 +166,21 @@ export default function TripPlan({ tripData }) {
         </div>
       </div>
 
-      {/* Budget */}
+      {/* Budget Breakdown */}
       {tripData.budgetBreakdown && (
-        <section className="mt-8">
-          <div className="rounded-3xl bg-white p-6 shadow-xl border">
-            <h3 className="text-2xl font-bold mb-4">Budget Breakdown</h3>
-            <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+        <section className="mb-8">
+          <div className="bg-gradient-to-br from-white to-gray-50 rounded-3xl p-6 shadow-xl border border-gray-100">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-2 h-8 bg-gradient-to-b from-blue-500 to-purple-500 rounded-full"></div>
+              <h3 className="text-2xl font-bold text-gray-900">Budget Breakdown</h3>
+            </div>
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
               {Object.entries(tripData.budgetBreakdown).map(([key, val]) => (
-                <div key={key} className="text-center p-4 rounded-2xl bg-gradient-to-br from-blue-50 to-emerald-50 border">
-                  <div className="font-semibold capitalize text-gray-800">{key}</div>
-                  <div className="text-blue-700 font-extrabold mt-1">{String(val).startsWith("₹") ? val : `₹${val}`}</div>
+                <div key={key} className="bg-white rounded-2xl p-4 shadow-lg border border-gray-100 text-center hover:shadow-xl transition-all">
+                  <div className="text-sm font-medium text-gray-600 capitalize mb-2">{key}</div>
+                  <div className="text-lg font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                    {String(val).startsWith("₹") ? val : `₹${val}`}
+                  </div>
                 </div>
               ))}
             </div>
@@ -141,11 +190,14 @@ export default function TripPlan({ tripData }) {
 
       {/* Daily Itinerary */}
       {tripData.itinerary?.length > 0 && (
-        <section className="mt-8">
-          <div className="rounded-3xl bg-white p-6 shadow-xl border">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-2xl font-bold">Daily Itinerary</h3>
-              <div className="text-sm text-gray-500">Tap any item for Maps or Calendar</div>
+        <section className="mb-8">
+          <div className="bg-gradient-to-br from-white to-gray-50 rounded-3xl p-6 shadow-xl border border-gray-100">
+            <div className="flex items-center justify-between mb-6">
+              <div className="flex items-center gap-3">
+                <div className="w-2 h-8 bg-gradient-to-b from-green-500 to-blue-500 rounded-full"></div>
+                <h3 className="text-2xl font-bold text-gray-900">Daily Itinerary</h3>
+              </div>
+              <div className="text-sm text-gray-500 hidden sm:block">Tap items for Maps & Calendar</div>
             </div>
             <div className="space-y-6">
               {tripData.itinerary.map((day, index) => (
@@ -158,9 +210,12 @@ export default function TripPlan({ tripData }) {
 
       {/* Hotels */}
       {tripData.hotels?.length > 0 && (
-        <section className="mt-8">
-          <div className="rounded-3xl bg-white p-6 shadow-xl border">
-            <h3 className="text-2xl font-bold mb-4">Hotels</h3>
+        <section className="mb-8">
+          <div className="bg-gradient-to-br from-white to-gray-50 rounded-3xl p-6 shadow-xl border border-gray-100">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-2 h-8 bg-gradient-to-b from-orange-500 to-red-500 rounded-full"></div>
+              <h3 className="text-2xl font-bold text-gray-900">Recommended Hotels</h3>
+            </div>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               {tripData.hotels.map((hotel, i) => {
                 const placeQuery = `${hotel.name}, ${hotel.location || destination}`;
@@ -171,27 +226,32 @@ export default function TripPlan({ tripData }) {
                   details: "Planned stay from your AI itinerary",
                 });
                 return (
-                  <div key={i} className="rounded-2xl border overflow-hidden bg-white shadow-sm hover:shadow-md transition">
+                  <div key={i} className="bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all border border-gray-100">
                     <div className="flex flex-col md:flex-row">
-                      <img src={hotel.image} alt={hotel.name} className="w-full md:w-48 h-40 md:h-full object-cover" />
-                      <div className="p-4 flex-1">
-                        <h4 className="font-semibold text-lg">{hotel.name}</h4>
-                        <p className="text-sm text-gray-500">{hotel.location}</p>
-                        <p className="text-blue-700 font-bold mt-1">₹{hotel.price}</p>
-                        <div className="mt-3 flex gap-2">
-                          <a href={gmaps} target="_blank" rel="noreferrer" className="px-3 py-1.5 text-sm bg-blue-600 text-white rounded-lg">Open in Maps</a>
-                          <a href={cal} target="_blank" rel="noreferrer" className="px-3 py-1.5 text-sm bg-emerald-600 text-white rounded-lg">Add to Calendar</a>
+                      <img 
+                        src={hotel.image} 
+                        alt={hotel.name} 
+                        className="w-full md:w-40 h-48 md:h-auto object-cover"
+                      />
+                      <div className="flex-1 p-5">
+                        <div className="flex items-start justify-between">
+                          <div>
+                            <h4 className="font-bold text-lg text-gray-900">{hotel.name}</h4>
+                            <p className="text-gray-600 text-sm mt-1">{hotel.location}</p>
+                            <p className="text-blue-600 font-bold text-lg mt-2">₹{hotel.price}</p>
+                          </div>
+                          <span className="px-2 py-1 bg-green-100 text-green-700 text-xs rounded-full">Featured</span>
+                        </div>
+                        <div className="mt-4 flex flex-wrap gap-2">
+                          <a href={gmaps} target="_blank" rel="noreferrer" className="flex-1 min-w-[120px] text-center px-3 py-2.5 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-all">
+                            Open in Maps
+                          </a>
+                          <a href={cal} target="_blank" rel="noreferrer" className="flex-1 min-w-[120px] text-center px-3 py-2.5 bg-green-600 text-white rounded-lg text-sm font-medium hover:bg-green-700 transition-all">
+                            Add to Calendar
+                          </a>
                         </div>
                       </div>
                     </div>
-                    {hotel.coordinates && (
-                      <div className="h-[220px]">
-                        <MapContainer center={[hotel.coordinates.lat, hotel.coordinates.lon]} zoom={13} style={{ height: "100%", width: "100%" }}>
-                          <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-                          <Marker position={[hotel.coordinates.lat, hotel.coordinates.lon]}><Popup>{hotel.name}</Popup></Marker>
-                        </MapContainer>
-                      </div>
-                    )}
                   </div>
                 );
               })}
@@ -202,25 +262,30 @@ export default function TripPlan({ tripData }) {
 
       {/* Transport */}
       {tripData.transport?.length > 0 && (
-        <section className="mt-8">
-          <div className="rounded-3xl bg-white p-6 shadow-xl border">
-            <h3 className="text-2xl font-bold mb-4">Transport Options</h3>
+        <section className="mb-8">
+          <div className="bg-gradient-to-br from-white to-gray-50 rounded-3xl p-6 shadow-xl border border-gray-100">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-2 h-8 bg-gradient-to-b from-purple-500 to-pink-500 rounded-full"></div>
+              <h3 className="text-2xl font-bold text-gray-900">Transport Options</h3>
+            </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {tripData.transport.map((t, i) => (
-                <div key={i} className="p-4 bg-gray-50 rounded-2xl border flex gap-3 hover:bg-gray-100 transition">
-                  <img src={t.image} alt={t.type} className="w-24 h-24 rounded-xl object-cover" />
-                  <div className="flex-1">
-                    <h4 className="font-semibold">{t.type}</h4>
-                    <p className="text-sm text-gray-600">{t.bestFor}</p>
-                    <p className="text-blue-700 font-bold mt-1">₹{t.cost}</p>
-                    <a
-                      href={mapsUrl({ destination: `${t.type} in ${destination}`, mode: (t.type || "driving").toLowerCase() })}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="inline-block mt-2 px-3 py-1.5 text-sm bg-blue-600 text-white rounded-lg"
-                    >
-                      Open in Maps
-                    </a>
+                <div key={i} className="bg-white rounded-2xl p-4 shadow-lg border border-gray-100 hover:shadow-xl transition-all">
+                  <div className="flex gap-4">
+                    <img src={t.image} alt={t.type} className="w-20 h-20 rounded-xl object-cover flex-shrink-0" />
+                    <div className="flex-1">
+                      <h4 className="font-bold text-gray-900">{t.type}</h4>
+                      <p className="text-gray-600 text-sm mt-1">{t.bestFor}</p>
+                      <p className="text-blue-600 font-bold text-lg mt-2">₹{t.cost}</p>
+                      <a
+                        href={mapsUrl({ destination: `${t.type} in ${destination}`, mode: (t.type || "driving").toLowerCase() })}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="inline-block mt-3 px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-all"
+                      >
+                        Find Options
+                      </a>
+                    </div>
                   </div>
                 </div>
               ))}
@@ -231,33 +296,35 @@ export default function TripPlan({ tripData }) {
 
       {/* Attractions */}
       {tripData.attractions?.length > 0 && (
-        <section className="mt-8 mb-10">
-          <div className="rounded-3xl bg-white p-6 shadow-xl border">
-            <h3 className="text-2xl font-bold mb-6">Attractions</h3>
+        <section className="mb-8">
+          <div className="bg-gradient-to-br from-white to-gray-50 rounded-3xl p-6 shadow-xl border border-gray-100">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-2 h-8 bg-gradient-to-b from-yellow-500 to-orange-500 rounded-full"></div>
+              <h3 className="text-2xl font-bold text-gray-900">Must-Visit Attractions</h3>
+            </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {tripData.attractions.map((a, i) => {
                 const maps = mapsUrl({ destination: `${a.name}, ${destination}`, mode: "driving" });
                 const cal = calendarUrl({ title: a.name, location: a.name, details: a.description });
                 return (
-                  <div key={i} className="rounded-2xl border bg-white overflow-hidden shadow-sm hover:shadow-md transition">
+                  <div key={i} className="bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all border border-gray-100">
                     <img src={a.image} alt={a.name} className="w-full h-48 object-cover" />
-                    <div className="p-4">
-                      <h4 className="font-semibold">{a.name}</h4>
-                      <p className="text-sm text-gray-600 mb-2">{a.description}</p>
-                      <p className="text-xs text-gray-500">Best Time: {a.bestTime} • Duration: {a.duration}</p>
-                      <div className="mt-3 flex gap-2">
-                        <a href={maps} target="_blank" rel="noreferrer" className="px-3 py-1.5 text-sm bg-blue-600 text-white rounded-lg">Open in Maps</a>
-                        <a href={cal} target="_blank" rel="noreferrer" className="px-3 py-1.5 text-sm bg-emerald-600 text-white rounded-lg">Add to Calendar</a>
+                    <div className="p-5">
+                      <h4 className="font-bold text-lg text-gray-900">{a.name}</h4>
+                      <p className="text-gray-600 text-sm mt-2 line-clamp-2">{a.description}</p>
+                      <div className="flex items-center gap-4 mt-3 text-xs text-gray-500">
+                        <span>🕐 {a.bestTime}</span>
+                        <span>⏱️ {a.duration}</span>
+                      </div>
+                      <div className="mt-4 flex flex-wrap gap-2">
+                        <a href={maps} target="_blank" rel="noreferrer" className="flex-1 min-w-[120px] text-center px-3 py-2.5 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-all">
+                          Open in Maps
+                        </a>
+                        <a href={cal} target="_blank" rel="noreferrer" className="flex-1 min-w-[120px] text-center px-3 py-2.5 bg-green-600 text-white rounded-lg text-sm font-medium hover:bg-green-700 transition-all">
+                          Add to Calendar
+                        </a>
                       </div>
                     </div>
-                    {a.coordinates && (
-                      <div className="h-[200px]">
-                        <MapContainer center={[a.coordinates.lat, a.coordinates.lon]} zoom={13} style={{ height: "100%", width: "100%" }}>
-                          <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-                          <Marker position={[a.coordinates.lat, a.coordinates.lon]}><Popup>{a.name}</Popup></Marker>
-                        </MapContainer>
-                      </div>
-                    )}
                   </div>
                 );
               })}
