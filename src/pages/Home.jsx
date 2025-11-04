@@ -108,7 +108,7 @@ const handleSubmit = async () => {
   console.log("📦 Sending data:", data);
 
   try {
-    const response = await API.post("/api/trip/generate", data);
+    const response = await API.post("/trip/generate", data);
     console.log("🟢 API Response:", response.data);
 
     localStorage.setItem("tripPlan", JSON.stringify(response.data));

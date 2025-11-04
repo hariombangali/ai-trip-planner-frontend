@@ -1,4 +1,4 @@
-// components/TripCard.jsx
+
 import { mapsUrl, calendarUrl } from "../utils/links";
 
 export default function TripCard({ day, theme, morning, afternoon, evening, date }) {
