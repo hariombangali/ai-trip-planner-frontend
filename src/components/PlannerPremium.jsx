@@ -15,10 +15,9 @@ function StepIndicator({ n, label, active, reduceMotion }) {
   return (
     <div className="flex items-center gap-2 sm:gap-3 select-none">
       <motion.div
-        className={`w-8 h-8 rounded-full flex items-center justify-center border-2 font-medium text-sm ${
-          active ? "bg-emerald-500 border-emerald-500 text-white shadow-lg"
-                 : "bg-white/80 border-gray-300 text-gray-500 dark:bg-slate-800/80 dark:border-slate-600"
-        }`}
+        className={`w-8 h-8 rounded-full flex items-center justify-center border-2 font-medium text-sm ${active ? "bg-emerald-500 border-emerald-500 text-white shadow-lg"
+          : "bg-white/80 border-gray-300 text-gray-500 dark:bg-slate-800/80 dark:border-slate-600"
+          }`}
         whileHover={reduceMotion ? {} : { scale: 1.06 }}
         whileTap={reduceMotion ? {} : { scale: 0.95 }}
         transition={spring}
@@ -76,13 +75,12 @@ function InterestChip({ active, children, onClick, disabled, reduceMotion }) {
       whileTap={disabled || reduceMotion ? {} : { scale: 0.95 }}
       animate={active && !reduceMotion ? { scale: 1.06, y: -2 } : { scale: 1, y: 0 }}
       transition={spring}
-      className={`px-4 py-3 sm:px-6 sm:py-3.5 rounded-2xl text-[13px] sm:text-sm font-semibold transition-all duration-300 shadow-md ${
-        active
-          ? "text-white shadow-emerald-500/25 bg-gradient-to-r from-emerald-500 to-purple-600"
-          : disabled
+      className={`px-4 py-3 sm:px-6 sm:py-3.5 rounded-2xl text-[13px] sm:text-sm font-semibold transition-all duration-300 shadow-md ${active
+        ? "text-white shadow-emerald-500/25 bg-gradient-to-r from-emerald-500 to-purple-600"
+        : disabled
           ? "bg-gray-100 text-gray-400 cursor-not-allowed border-gray-200"
           : "bg-white/80 text-gray-700 hover:bg-gray-50 border-2 border-gray-200/60 dark:bg-slate-800/80 dark:text-gray-300 dark:border-slate-600"
-      }`}
+        }`}
       aria-pressed={active}
       aria-disabled={disabled}
     >
@@ -140,9 +138,8 @@ export default function PlannerPremium(props) {
           whileTap={loading || reduceMotion ? {} : { scale: 0.98 }}
         >
           <div className="absolute -inset-2 bg-gradient-to-r from-emerald-400 to-purple-500 rounded-2xl blur-lg opacity-75 group-hover:opacity-100 transition duration-300" />
-          <div className={`relative bg-gradient-to-r from-emerald-500 to-purple-600 text-white px-6 py-4 sm:px-10 sm:py-5 rounded-2xl shadow-xl sm:shadow-2xl font-semibold text-base sm:text-lg flex items-center justify-center gap-3 transition-all duration-300 ${
-            loading ? "opacity-50 cursor-not-allowed" : "hover:from-emerald-600 hover:to-purple-700"
-          }`}>
+          <div className={`relative bg-gradient-to-r from-emerald-500 to-purple-600 text-white px-6 py-4 sm:px-10 sm:py-5 rounded-2xl shadow-xl sm:shadow-2xl font-semibold text-base sm:text-lg flex items-center justify-center gap-3 transition-all duration-300 ${loading ? "opacity-50 cursor-not-allowed" : "hover:from-emerald-600 hover:to-purple-700"
+            }`}>
             <FaRocket className="text-lg sm:text-xl" />
             {loading ? "Processing..." : "Craft Your Dream Journey"}
           </div>
@@ -204,11 +201,21 @@ export default function PlannerPremium(props) {
                           aria-label="Destination"
                           disabled={loading}
                         />
+
                         {suggestOpen && filteredSuggestions.length > 0 && !loading && (
                           <motion.ul
                             initial={reduceMotion ? false : { opacity: 0, y: 10, scale: 0.98 }}
                             animate={reduceMotion ? false : { opacity: 1, y: 0, scale: 1 }}
-                            className="absolute z-20 mt-2 sm:mt-3 w-full rounded-2xl overflow-auto max-h-56 sm:max-h-72 border border-gray-200 dark:border-slate-700 bg-white/95 dark:bg-slate-900/95 backdrop-blur shadow-xl sm:shadow-2xl"
+                            className="
+                              absolute left-0 right-0 mt-2 sm:mt-3
+                              z-50
+                              w-full rounded-2xl overflow-auto max-h-56 sm:max-h-72
+                              bg-white dark:bg-slate-900
+                              backdrop-blur-0
+                              ring-1 ring-black/5 shadow-2xl
+                              border border-transparent
+                              pointer-events-auto
+                            "
                             role="listbox"
                           >
                             {filteredSuggestions.map((s) => (
@@ -234,7 +241,34 @@ export default function PlannerPremium(props) {
                           type="number"
                           min={1}
                           value={travelers}
-                          onChange={(e) => setTravelers(Math.max(1, Number(e.target.value)))}
+                          onChange={(e) => {
+                            const rawValue = e.target.value;
+
+                            // Allow empty input temporarily
+                            if (rawValue === '') {
+                              setTravelers('');
+                              return;
+                            }
+
+                            const numValue = Number(rawValue);
+
+                            // Only update if it's a valid number and >= 1
+                            if (!isNaN(numValue) && numValue >= 1) {
+                              setTravelers(numValue);
+                            }
+                          }}
+                          onBlur={(e) => {
+                            // On blur, if empty or invalid, reset to 1
+                            if (e.target.value === '' || Number(e.target.value) < 1) {
+                              setTravelers(1);
+                            }
+                          }}
+                          onKeyDown={(e) => {
+                            // Prevent negative numbers
+                            if (e.key === '-' || e.key === 'e' || e.key === 'E') {
+                              e.preventDefault();
+                            }
+                          }}
                           className="w-full rounded-2xl bg-transparent outline-none px-10 sm:px-12 py-3 sm:py-4 text-[14px] sm:text-base disabled:opacity-50 disabled:cursor-not-allowed"
                           aria-label="Travelers"
                           disabled={loading}
@@ -270,14 +304,21 @@ export default function PlannerPremium(props) {
 
                       {/* Budget */}
                       <div className="rounded-2xl border-2 border-gray-200/80 dark:border-slate-700 bg-white/90 dark:bg-slate-900/90 backdrop-blur p-4 sm:p-6 shadow-md sm:shadow-lg">
-                        <label className="text-[13px] sm:text-sm font-semibold mb-2 sm:mb-3 block text-gray-700 dark:text-gray-300">
-                          💰 Budget Range
-                        </label>
+                        <div className="flex items-center justify-between mb-2 sm:mb-3">
+                          <label className="text-[13px] sm:text-sm font-semibold text-gray-700 dark:text-gray-300">
+                            💰 Budget Range
+                          </label>
+                          <span className="text-xs text-gray-500">
+                            {budget <= 5000 ? '💰 Budget' :
+                              budget <= 15000 ? '⭐ Premium' :
+                                '💎 Luxury'}
+                          </span>
+                        </div>
                         <input
                           type="range"
-                          min={200}
-                          max={3000}
-                          step={50}
+                          min={1000}
+                          max={30000}
+                          step={500}
                           value={budget}
                           onChange={(e) => setBudget(Number(e.target.value))}
                           className="w-full accent-emerald-500 disabled:opacity-50"
@@ -285,16 +326,16 @@ export default function PlannerPremium(props) {
                           disabled={loading}
                         />
                         <div className="mt-3 sm:mt-4 flex items-center justify-between text-[12px] sm:text-sm">
-                          <span className="text-gray-500">Economy</span>
+                          <span className="text-gray-500">₹1K</span>
                           <motion.span
                             key={budget}
                             initial={reduceMotion ? false : { scale: 1.05, opacity: 0 }}
                             animate={reduceMotion ? false : { scale: 1, opacity: 1 }}
                             className="text-base sm:text-lg font-bold bg-gradient-to-r from-emerald-600 to-purple-600 bg-clip-text text-transparent"
                           >
-                            ₹{budget} / person
+                            ₹{(budget / 1000).toFixed(0)}K / person
                           </motion.span>
-                          <span className="text-gray-500">Luxury</span>
+                          <span className="text-gray-500">₹30K</span>
                         </div>
                       </div>
                     </div>
@@ -304,11 +345,10 @@ export default function PlannerPremium(props) {
                     <motion.button
                       onClick={() => !loading && setStep(2)}
                       disabled={!canContinueStep1 || loading}
-                      className={`w-full sm:w-auto px-6 sm:px-8 py-3 sm:py-4 rounded-2xl font-semibold shadow-lg sm:shadow-2xl flex items-center justify-center gap-3 group transition-all duration-300 text-white ${
-                        canContinueStep1 && !loading
-                          ? "bg-gradient-to-r from-emerald-500 to-purple-500 hover:from-emerald-600 hover:to-purple-600"
-                          : "bg-gray-300 dark:bg-slate-700 cursor-not-allowed"
-                      }`}
+                      className={`w-full sm:w-auto px-6 sm:px-8 py-3 sm:py-4 rounded-2xl font-semibold shadow-lg sm:shadow-2xl flex items-center justify-center gap-3 group transition-all duration-300 text-white ${canContinueStep1 && !loading
+                        ? "bg-gradient-to-r from-emerald-500 to-purple-500 hover:from-emerald-600 hover:to-purple-600"
+                        : "bg-gray-300 dark:bg-slate-700 cursor-not-allowed"
+                        }`}
                       whileHover={canContinueStep1 && !loading && !reduceMotion ? { scale: 1.02, y: -2 } : {}}
                       whileTap={canContinueStep1 && !loading && !reduceMotion ? { scale: 0.98 } : {}}
                       aria-disabled={!canContinueStep1 || loading}
@@ -393,11 +433,10 @@ export default function PlannerPremium(props) {
                       whileTap={loading || reduceMotion ? {} : { scale: 0.98 }}
                       onHoverStart={() => !loading && !reduceMotion && setHoverCTA(true)}
                       onHoverEnd={() => !loading && !reduceMotion && setHoverCTA(false)}
-                      className={`w-full sm:w-auto px-6 sm:px-8 py-3 sm:py-4 rounded-2xl font-bold shadow-xl sm:shadow-2xl flex items-center justify-center gap-3 group relative overflow-hidden transition-all ${
-                        loading
-                          ? "bg-gray-400 cursor-not-allowed text-white"
-                          : "bg-gradient-to-r from-emerald-500 to-purple-500 hover:from-emerald-600 hover:to-purple-600 text-white"
-                      }`}
+                      className={`w-full sm:w-auto px-6 sm:px-8 py-3 sm:py-4 rounded-2xl font-bold shadow-xl sm:shadow-2xl flex items-center justify-center gap-3 group relative overflow-hidden transition-all ${loading
+                        ? "bg-gray-400 cursor-not-allowed text-white"
+                        : "bg-gradient-to-r from-emerald-500 to-purple-500 hover:from-emerald-600 hover:to-purple-600 text-white"
+                        }`}
                     >
                       {loading ? (
                         <>
