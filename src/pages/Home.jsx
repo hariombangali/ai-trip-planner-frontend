@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
 import API from "../services/api"; 
+import { useNavigate } from "react-router-dom";
 import {
   FaMapMarkerAlt,
   FaPlane,
@@ -32,6 +33,8 @@ export default function Home() {
   const [faqOpen, setFaqOpen] = useState(null);
   const [selectedInterests, setSelectedInterests] = useState([]);
   const [plannerStep, setPlannerStep] = useState(1);
+  const navigate = useNavigate();
+
 
 
   const interestsList = [
@@ -113,7 +116,7 @@ const handleSubmit = async () => {
 
     localStorage.setItem("tripPlan", JSON.stringify(response.data));
     alert("🤖 AI Trip Plan Generated! Redirecting...");
-    window.location.href = "/plan";
+   navigate("/plan");
   } catch (error) {
     console.error("🔴 API Error:", error);
     alert("Error generating trip plan: " + error.message);
