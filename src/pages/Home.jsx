@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react";
+import API from "../services/api"; 
 import {
   FaMapMarkerAlt,
   FaPlane,
@@ -17,8 +18,7 @@ import {
   FaSun,
   FaMoon,
 } from "react-icons/fa";
-// Optional: enable later
-// import { motion } from "framer-motion";
+
 
 export default function Home() {
   const [dark, setDark] = useState(false);
@@ -92,27 +92,34 @@ export default function Home() {
     { q: "Is there an offline option?", a: "Export to PDF and share with your group for offline access." },
   ];
 
-  const handleSubmit = async () => {
-    console.log("🟡 Starting AI trip generation...");
-    const data = { destination, startDate, endDate, travelers: Number(travelers), budget: Number(budget), interests: selectedInterests };
-    console.log("📦 Sending data:", data);
-    try {
-      const response = await fetch("http://localhost:5000/api/trip/generate", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
-      });
-      console.log("🟢 Fetch response status:", response.status);
-      const result = await response.json();
-      console.log("🟢 AI Response data:", result);
-      localStorage.setItem("tripPlan", JSON.stringify(result));
-      alert("🤖 AI Trip Plan Generated! Redirecting...");
-      window.location.href = "/plan";
-    } catch (error) {
-      console.error("🔴 Fetch error:", error);
-      alert("Error generating trip plan: " + error.message);
-    }
+
+const handleSubmit = async () => {
+  console.log("🟡 Starting AI trip generation...");
+
+  const data = {
+    destination,
+    startDate,
+    endDate,
+    travelers: Number(travelers),
+    budget: Number(budget),
+    interests: selectedInterests,
   };
+
+  console.log("📦 Sending data:", data);
+
+  try {
+    const response = await API.post("/api/trip/generate", data);
+    console.log("🟢 API Response:", response.data);
+
+    localStorage.setItem("tripPlan", JSON.stringify(response.data));
+    alert("🤖 AI Trip Plan Generated! Redirecting...");
+    window.location.href = "/plan";
+  } catch (error) {
+    console.error("🔴 API Error:", error);
+    alert("Error generating trip plan: " + error.message);
+  }
+};
+
 
   return (
     <div className={dark ? "dark" : ""}>
